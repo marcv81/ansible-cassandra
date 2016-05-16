@@ -1,0 +1,1 @@
+This role configures Cassandra and CQLSH then starts or restarts the node. It should run sequentially, first on the seeds then on the remaining nodes. This ensures the nodes bootstrap in the right order and restart with no downtime when the configuration changes.

@@ -1,0 +1,6 @@
+[connection]
+hostname = {{ ansible_ssh_host }}
+port = 9042
+
+[ssl]
+validate = false

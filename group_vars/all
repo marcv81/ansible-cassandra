@@ -1,0 +1,7 @@
+---
+
+cluster_name: test
+store_password: password
+cassandra_password: password
+default_password: cassandra
+certificate_validity: 36524

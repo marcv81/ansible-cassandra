@@ -1,0 +1,11 @@
+---
+
+- name: CQLSH configuration directory exists
+  file:
+    path: ~/.cassandra
+    state: directory
+
+- name: CQLSH configuration is installed
+  template:
+    src: cqlshrc
+    dest: ~/.cassandra/cqlshrc

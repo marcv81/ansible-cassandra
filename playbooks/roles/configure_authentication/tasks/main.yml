@@ -1,0 +1,30 @@
+---
+
+- name: Check default password
+  shell: >
+    echo "
+      EXIT
+    " | cqlsh --ssl -u cassandra -p {{ default_password }}
+  changed_when: False
+  failed_when: False
+  register: password_status
+
+- name: Replication factor is 3
+  shell: >
+    echo "
+      ALTER KEYSPACE system_auth
+      WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 3 };
+    " | cqlsh --ssl -u cassandra -p {{ default_password }}
+  when: password_status.rc == 0
+
+- name: Keyspace is repaired
+  command: nodetool repair -- system_auth
+  when: password_status.rc == 0
+
+- name: Password is updated
+  shell: >
+    echo "
+      ALTER USER cassandra
+      WITH PASSWORD '{{ cassandra_password }}';
+    " | cqlsh --ssl -u cassandra -p {{ default_password }}
+  when: password_status.rc == 0

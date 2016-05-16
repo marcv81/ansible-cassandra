@@ -1,0 +1,29 @@
+---
+
+- hosts: localhost
+  gather_facts: False
+  roles:
+  - generate_certificates
+
+- hosts: cassandra
+  gather_facts: False
+  roles:
+  - install_cassandra
+
+- hosts: cassandra:&cassandra_seed
+  gather_facts: False
+  serial: 1
+  roles:
+  - configure_node
+
+- hosts: cassandra:!cassandra_seed
+  gather_facts: False
+  serial: 1
+  roles:
+  - configure_node
+
+- hosts: cassandra
+  gather_facts: False
+  run_once: true
+  roles:
+  - configure_authentication

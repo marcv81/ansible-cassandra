@@ -1,0 +1,35 @@
+---
+
+- name: Default configuration is backed up
+  command: cp /etc/cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml.default
+  args:
+    creates: /etc/cassandra/cassandra.yaml.default
+
+- name: Custom configuration is installed
+  template:
+    src: cassandra.yaml
+    dest: /etc/cassandra/cassandra.yaml
+    owner: cassandra
+    group: cassandra
+    mode: 0600
+  notify: Restart Cassandra
+
+- name: Truststore is installed
+  copy:
+    src: "../certs/{{cluster_name}}/nodes-truststore.jks"
+    dest: "/etc/cassandra/nodes-truststore.jks"
+    owner: cassandra
+    group: cassandra
+    mode: 0600
+  notify: Restart Cassandra
+
+- name: Keystore is installed
+  copy:
+    src: "../certs/{{cluster_name}}/nodes-keystore.jks"
+    dest: "/etc/cassandra/nodes-keystore.jks"
+    owner: cassandra
+    group: cassandra
+    mode: 0600
+  notify: Restart Cassandra
+
+- meta: flush_handlers

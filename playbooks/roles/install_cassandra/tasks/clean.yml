@@ -1,0 +1,25 @@
+---
+
+- name: Check if node is clean
+  stat:
+    path: /etc/cassandra/.clean
+  register: cassandra_clean
+  changed_when: False
+
+- name: Cassandra is stopped if not clean
+  service:
+    name: cassandra
+    state: stopped
+  when: not cassandra_clean.stat.exists
+
+- name: System data is removed if not clean
+  file:
+    path: /var/lib/cassandra/data/system
+    state: absent
+  when: not cassandra_clean.stat.exists
+
+- name: Node is marked as clean
+  file:
+    path: /etc/cassandra/.clean
+    state: touch
+  when: not cassandra_clean.stat.exists

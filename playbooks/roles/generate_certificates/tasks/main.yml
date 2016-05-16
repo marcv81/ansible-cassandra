@@ -1,0 +1,39 @@
+---
+
+- name: Destination directory exists
+  file:
+    path: certs/{{cluster_name}}
+    state: directory
+
+- name: Self-signed key-certificate is available
+  command: >
+    openssl req -x509
+    -newkey rsa:4096 -subj "/O={{cluster_name}}-nodes" -days "{{certificate_validity}}" -nodes
+    -keyout "certs/{{cluster_name}}/nodes-key.pem" -out "certs/{{cluster_name}}/nodes-cert.pem"
+  args:
+    creates: "certs/{{cluster_name}}/nodes-key.pem"
+
+- name: PKCS12 key-certificate is available
+  command: >
+    openssl pkcs12 -export -name "{{cluster_name}}-nodes"
+    -in "certs/{{cluster_name}}/nodes-cert.pem" -inkey "certs/{{cluster_name}}/nodes-key.pem"
+    -out "certs/{{cluster_name}}/nodes.pkcs12" -passout pass:"{{store_password}}"
+  args:
+    creates: "certs/{{cluster_name}}/nodes.pkcs12"
+
+- name: Keystore is available
+  command: >
+    keytool
+    -importkeystore -alias "{{cluster_name}}-nodes"
+    -srckeystore "certs/{{cluster_name}}/nodes.pkcs12" -srcstoretype pkcs12 -srcstorepass "{{store_password}}"
+    -destkeystore "certs/{{cluster_name}}/nodes-keystore.jks" -deststorepass "{{store_password}}"
+  args:
+    creates: "certs/{{cluster_name}}/nodes-keystore.jks"
+
+- name: Truststore is available
+  command: >
+    keytool
+    -importcert -alias "{{cluster_name}}-nodes" -file "certs/{{cluster_name}}/nodes-cert.pem" -noprompt
+    -keystore "certs/{{cluster_name}}/nodes-truststore.jks" -storepass "{{store_password}}"
+  args:
+    creates: "certs/{{cluster_name}}/nodes-truststore.jks"
