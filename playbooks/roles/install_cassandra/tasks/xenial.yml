@@ -1,0 +1,10 @@
+---
+
+- name: Package python-support is available
+  get_url:
+    url: http://launchpadlibrarian.net/109052632/python-support_1.0.15_all.deb
+    dest: /root/python-support_1.0.15_all.deb
+
+- name: Package python-support is installed
+  apt:
+    deb: /root/python-support_1.0.15_all.deb

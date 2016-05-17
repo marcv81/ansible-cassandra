@@ -2,15 +2,15 @@
 
 hosts:
   cassandra-01:
-    box: ubuntu/wily64
+    box: marcv81/xenial64
     ip: 192.168.56.101
     memory: 2048
   cassandra-02:
-    box: ubuntu/wily64
+    box: marcv81/xenial64
     ip: 192.168.56.102
     memory: 2048
   cassandra-03:
-    box: ubuntu/wily64
+    box: marcv81/xenial64
     ip: 192.168.56.103
     memory: 2048
 
